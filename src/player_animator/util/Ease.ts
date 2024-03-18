@@ -3,54 +3,7 @@
  * + constant + linear
  */
 
-export default class Ease {
-	LINEAR = new Ease(0, (f) => f);
-	CONSTANT = new Ease(1, (f) => 0);
-	INSINE = new Ease(6, Easing.inSine);
-	OUTSINE = new Ease(7, Easing.outSine);
-	INOUTSINE = new Ease(8, Easing.inOutSine);
-	INCUBIC = new Ease(9, Easing.inCubic);
-	OUTCUBIC = new Ease(10, Easing.outCubic);
-	INOUTCUBIC = new Ease(11, Easing.inOutCubic);
-	INQUAD = new Ease(12, Easing.inQuad);
-	OUTQUAD = new Ease(13, Easing.outQuad);
-	INOUTQUAD = new Ease(14, Easing.inOutQuad);
-	INQUART = new Ease(15, Easing.inQuart);
-	OUTQUART = new Ease(16, Easing.outQuart);
-	INOUTQUART = new Ease(17, Easing.inOutQuart);
-	INQUINT = new Ease(18, Easing.inQuint);
-	OUTQUINT = new Ease(19, Easing.outQuint);
-	INOUTQUINT = new Ease(20, Easing.inOutQuint);
-	INEXPO = new Ease(21, Easing.inExpo);
-	OUTEXPO = new Ease(22, Easing.outExpo);
-	INOUTEXPO = new Ease(23, Easing.inOutExpo);
-	INCIRC = new Ease(24, Easing.inCirc);
-	OUTCIRC = new Ease(25, Easing.outCirc);
-	INOUTCIRC = new Ease(26, Easing.inOutCirc);
-	INBACK = new Ease(27, Easing.inBack);
-	OUTBACK = new Ease(28, Easing.outBack);
-	INOUTBACK = new Ease(29, Easing.inOutBack);
-	INELASTIC = new Ease(30, Easing.inElastic);
-	OUTELASTIC = new Ease(31, Easing.outElastic);
-	INOUTELASTIC = new Ease(32, Easing.inOutElastic);
-	INBOUNCE = new Ease(33, Easing.inBounce);
-	OUTBOUNCE = new Ease(34, Easing.outBounce);
-	INOUTBOUNCE = new Ease(35, Easing.inOutBounce);
-
-	private readonly id;
-	private readonly callback;
-
-	constructor(id: number, callback: (value: number) => number) {
-		this.id = id;
-		this.callback = callback;
-	}
-
-	getId() {
-		return this.id;
-	}
-}
-
-class Easing {
+export class Easing {
 	static inSine(f: number): number {
 		return 1 - Math.cos(f * (Math.PI / 2));
 	}
@@ -189,5 +142,71 @@ class Easing {
 		return f < 0.5
 			? Easing.inBounce(f * 2) * 0.5
 			: Easing.outBounce(f * 2 - 1) * 0.5 + 0.5;
+	}
+
+	/**
+	 * @param string ease name
+	 * @return ease
+	 */
+	public static easeFromString(string: string): Ease {
+		try {
+			if (string == "step") return Ease.CONSTANT;
+			if (string.substring(0, 4).toUpperCase() == "EASE") {
+				string = string.substring(4);
+			}
+
+			// @ts-ignore
+			// TODO: Fix this shitcoding (c) Maks_gaming
+			return Ease[string.toUpperCase()];
+		} catch {
+			return Ease.LINEAR;
+		}
+	}
+}
+
+export default class Ease {
+	static LINEAR = new Ease(0, (f) => f);
+	static CONSTANT = new Ease(1, (f) => 0);
+	static INSINE = new Ease(6, Easing.inSine);
+	static OUTSINE = new Ease(7, Easing.outSine);
+	static INOUTSINE = new Ease(8, Easing.inOutSine);
+	static INCUBIC = new Ease(9, Easing.inCubic);
+	static OUTCUBIC = new Ease(10, Easing.outCubic);
+	static INOUTCUBIC = new Ease(11, Easing.inOutCubic);
+	static INQUAD = new Ease(12, Easing.inQuad);
+	static OUTQUAD = new Ease(13, Easing.outQuad);
+	static INOUTQUAD = new Ease(14, Easing.inOutQuad);
+	static INQUART = new Ease(15, Easing.inQuart);
+	static OUTQUART = new Ease(16, Easing.outQuart);
+	static INOUTQUART = new Ease(17, Easing.inOutQuart);
+	static INQUINT = new Ease(18, Easing.inQuint);
+	static OUTQUINT = new Ease(19, Easing.outQuint);
+	static INOUTQUINT = new Ease(20, Easing.inOutQuint);
+	static INEXPO = new Ease(21, Easing.inExpo);
+	static OUTEXPO = new Ease(22, Easing.outExpo);
+	static INOUTEXPO = new Ease(23, Easing.inOutExpo);
+	static INCIRC = new Ease(24, Easing.inCirc);
+	static OUTCIRC = new Ease(25, Easing.outCirc);
+	static INOUTCIRC = new Ease(26, Easing.inOutCirc);
+	static INBACK = new Ease(27, Easing.inBack);
+	static OUTBACK = new Ease(28, Easing.outBack);
+	static INOUTBACK = new Ease(29, Easing.inOutBack);
+	static INELASTIC = new Ease(30, Easing.inElastic);
+	static OUTELASTIC = new Ease(31, Easing.outElastic);
+	static INOUTELASTIC = new Ease(32, Easing.inOutElastic);
+	static INBOUNCE = new Ease(33, Easing.inBounce);
+	static OUTBOUNCE = new Ease(34, Easing.outBounce);
+	static INOUTBOUNCE = new Ease(35, Easing.inOutBounce);
+
+	private readonly id;
+	private readonly callback;
+
+	constructor(id: number, callback: (value: number) => number) {
+		this.id = id;
+		this.callback = callback;
+	}
+
+	getId() {
+		return this.id;
 	}
 }

@@ -153,6 +153,8 @@ export default class AnimationBuilder {
 		this.bodyParts["rightItem"] = this.rightItem;
 		this.bodyParts["torso"] = this.torso;
 		this.emoteEmoteFormat = emoteFormat;
+
+		return this;
 	}
 
 	create2(
@@ -206,6 +208,7 @@ export default class AnimationBuilder {
 
 		// this.iconData = extraData["iconData"] && extraData["iconData"] instanceof ByteBuffer ? (ByteBuffer) extraData["iconData"] : undefined;
 		// this.song = extraData["song"] && extraData["song"] instanceof NBS ? (NBS) extraData["song"] : undefined;
+		return this;
 	}
 
 	setDescription(s: string) {

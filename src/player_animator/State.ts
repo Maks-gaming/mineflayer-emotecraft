@@ -1,4 +1,5 @@
 import KeyFrame from "./KeyFrame";
+import Ease from "./util/Ease";
 
 export default class State {
 	private isModifiable = true;
@@ -25,6 +26,54 @@ export default class State {
 		this.threshold = threshold;
 		this.name = name;
 		this.isAngle = isAngle;
+	}
+
+	/**
+	 * Add a new keyframe to the emote
+	 *
+	 * @param tick    where
+	 * @param value   what value
+	 * @param ease    with what easing
+	 * @param rotate  360 degrees turn
+	 * @param degrees is the value in degrees (or radians if false
+	 * @return is the keyframe valid
+	 */
+	public addKeyFrame1(
+		tick: number,
+		value: number,
+		ease: Ease,
+		rotate: number,
+		degrees: boolean,
+	) {
+		if (degrees && this.isAngle) value *= 0.01745329251;
+		let bl = this.addKeyFrame3(new KeyFrame(tick, value, ease));
+		if (this.isAngle && rotate != 0) {
+			bl =
+				this.addKeyFrame3(
+					new KeyFrame(tick, value + Math.PI * 2.0 * rotate, ease),
+				) && bl;
+		}
+		return bl;
+	}
+
+	public addKeyFrame2(tick: number, value: number, ease: Ease) {
+		if (isNaN(value)) throw new Error("value can't be NaN");
+		return this.addKeyFrame3(new KeyFrame(tick, value, ease));
+	}
+
+	/**
+	 * Internal add keyframe method
+	 *
+	 * @param keyFrame what
+	 * @return is valid keyframe
+	 */
+	private addKeyFrame3(keyFrame: KeyFrame): boolean {
+		this.setEnabled(true);
+		this.keyFrames.push(keyFrame);
+		return (
+			this.isAngle ||
+			!(Math.abs(this.defaultValue - keyFrame.value) > this.threshold)
+		);
 	}
 
 	/**
