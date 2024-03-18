@@ -52,12 +52,12 @@ export default class KeyframeAnimation {
 		stopTick: number,
 		isInfinite: boolean,
 		returnToTick: number,
-		bodyParts: Map<string, StateCollection>,
+		bodyParts: { [key: string]: StateCollection },
 		isEasingBefore: boolean,
 		nsfw: boolean,
 		uuid: UUID,
 		emoteFormat: AnimationFormat,
-		extraData: Map<string, Object>,
+		extraData: { [id: string]: Object },
 	) {
 		this.beginTick = Math.max(beginTick, 0);
 		this.endTick = Math.max(beginTick + 1, endTick);
@@ -71,8 +71,8 @@ export default class KeyframeAnimation {
 			string,
 			StateCollection
 		>();
-		for (const [key, value] of bodyParts.entries()) {
-			bodyMap.set(key, value.copy());
+		for (const key of Object.keys(bodyParts)) {
+			bodyMap.set(key, bodyParts[key].copy());
 		}
 		bodyMap.forEach((stateCollection, key) => {
 			stateCollection.verifyAndLock(this.getLength());
@@ -91,9 +91,9 @@ export default class KeyframeAnimation {
 		this.animationFormat = emoteFormat;
 		assert(emoteFormat != null);
 
-		extraData.forEach((value, key) => {
-			this.extraData[key] = value;
-		});
+		for (const key in Object.keys(extraData)) {
+			this.extraData[key] = extraData[key];
+		}
 	}
 
 	private generateHashCode(obj: any): number {

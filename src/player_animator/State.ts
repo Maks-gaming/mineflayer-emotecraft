@@ -45,6 +45,36 @@ export default class State {
 		this.lock();
 	}
 
+	public setEnabled(newValue: boolean) {
+		if (this.isModifiable) {
+			this.isEnabled = newValue;
+		} else {
+			throw new Error("Can not modify locked things");
+		}
+	}
+
+	optimize(isLooped: boolean, returnToTick: number) {
+		for (let i = 1; i < this.keyFrames.length - 1; i++) {
+			if (this.keyFrames[i - 1].value != this.keyFrames[i].value) {
+				continue;
+			}
+			if (
+				this.keyFrames.length <= i + 1 ||
+				this.keyFrames[i].value != this.keyFrames[i + 1].value
+			) {
+				continue;
+			}
+			if (
+				isLooped &&
+				this.keyFrames[i - 1].tick < returnToTick &&
+				this.keyFrames[i].tick >= returnToTick
+			) {
+				continue;
+			}
+			delete this.keyFrames[i--];
+		}
+	}
+
 	private lock() {
 		this.isModifiable = false;
 		//this.keyFrames = Collections.unmodifiableList(keyFrames);
