@@ -71,9 +71,9 @@ export default class KeyframeAnimation {
 			string,
 			StateCollection
 		>();
-		for (const key of Object.keys(bodyParts)) {
+		Object.entries(bodyParts).forEach(([key, value]) => {
 			bodyMap.set(key, bodyParts[key].copy());
-		}
+		});
 		bodyMap.forEach((stateCollection, key) => {
 			stateCollection.verifyAndLock(this.getLength());
 		});
@@ -81,7 +81,7 @@ export default class KeyframeAnimation {
 
 		this.isEasingBefore = isEasingBefore;
 		this.nsfw = nsfw;
-		if (uuid == null) {
+		if (uuid == undefined) {
 			this.isUUIDGenerated = true;
 			uuid = this.generateUuid();
 		} else {
@@ -89,24 +89,23 @@ export default class KeyframeAnimation {
 		}
 		this.uuid = uuid;
 		this.animationFormat = emoteFormat;
-		assert(emoteFormat != null);
+		assert(emoteFormat != undefined);
 
-		for (const key in Object.keys(extraData)) {
-			this.extraData[key] = extraData[key];
-		}
+		Object.entries(extraData).forEach(([key, value]) => {
+			this.extraData[key] = value;
+		});
 	}
 
 	private generateHashCode(obj: any): number {
 		let hash = 0;
 
-		for (let key of Object.keys(obj)) {
-			const value = obj[key];
+		Object.entries(obj).forEach(([key, value]) => {
 			hash =
 				(hash << 5) +
 				hash +
 				this.hashString(key) +
 				this.hashString(JSON.stringify(value));
-		}
+		});
 		return hash;
 	}
 
@@ -137,10 +136,10 @@ export default class KeyframeAnimation {
 		const authHash: bigint =
 			BigInt(result) * 31n +
 			BigInt(this.generateHashCode(this.extraData));
-		//const iconHash: bigint = this.iconData == null ? 0n : BigInt(iconData.hashCode()) + authHash * 31n;
+		//const iconHash: bigint = this.iconData == undefined ? 0n : BigInt(iconData.hashCode()) + authHash * 31n;
 
 		return {
-			lessSignificantBits: (descHash << 32n) + authHash,
+			leastSignificantBits: (descHash << 32n) + authHash,
 			mostSignificantBits: (dataHash << 32n) + nameHash,
 		};
 	}

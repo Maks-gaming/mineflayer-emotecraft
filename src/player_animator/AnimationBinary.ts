@@ -37,7 +37,7 @@ export default class AnimationBinary {
 			this.writePart(buf, animation.getPart("leftLeg"), version);
 		}
 		buf.putLong(animation.getUuid().mostSignificantBits);
-		buf.putLong(animation.getUuid().lessSignificantBits);
+		buf.putLong(animation.getUuid().leastSignificantBits);
 
 		return buf;
 	}

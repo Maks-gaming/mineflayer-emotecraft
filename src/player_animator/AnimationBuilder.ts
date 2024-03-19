@@ -2,6 +2,16 @@ import AnimationFormat from "./AnimationFormat";
 import KeyframeAnimation from "./KeyframeAnimation";
 import StateCollection from "./StateCollection";
 
+function generateUUID(): UUID {
+	const mostSignificantBits = BigInt(
+		Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
+	);
+	const leastSignificantBits = BigInt(
+		Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
+	);
+	return { leastSignificantBits, mostSignificantBits };
+}
+
 export default class AnimationBuilder {
 	static staticThreshold = 8;
 
@@ -20,7 +30,7 @@ export default class AnimationBuilder {
 	private bodyParts: { [id: string]: StateCollection } = {};
 
 	/**
-	 * If you want auto-uuid, leave it null
+	 * If you want auto-uuid, leave it undefined
 	 */
 	uuid: UUID | undefined;
 
@@ -36,14 +46,14 @@ export default class AnimationBuilder {
 	name: string | undefined;
 
 	//Common names used in Emotecraft
-	//If not null, it will be added to extraData
+	//If not undefined, it will be added to extraData
 	description: string | undefined;
 	author: string | undefined;
 
-	// @Nullable
-	//  NBS song = null;
+	// @undefinedable
+	//  NBS song = undefined;
 
-	// @Nullable
+	// @undefinedable
 	//  ByteBuffer iconData;
 
 	extraData: { [id: string]: Object } = {};
@@ -284,9 +294,9 @@ export default class AnimationBuilder {
 	}
 
 	fullyEnableParts() {
-		for (const key in Object.keys(this.bodyParts)) {
-			this.bodyParts[key].fullyEnablePart(false);
-		}
+		Object.entries(this.bodyParts).forEach(([key, value]) => {
+			value.fullyEnablePart(false);
+		});
 		return this;
 	}
 
@@ -295,9 +305,9 @@ export default class AnimationBuilder {
 	 * If the keyframe before and after are the same as the currently checked, the keyframe will be removed
 	 */
 	optimizeEmote() {
-		for (const key in Object.keys(this.bodyParts)) {
-			this.bodyParts[key].optimize(this.isLooped, this.returnTick);
-		}
+		Object.entries(this.bodyParts).forEach(([key, value]) => {
+			value.optimize(this.isLooped, this.returnTick);
+		});
 		return this;
 	}
 
@@ -307,14 +317,14 @@ export default class AnimationBuilder {
 	 * @throws IllegalArgumentException if trying to build with invalid data.
 	 */
 	build() {
-		if (this.name != null) this.extraData["name"] = this.name;
-		if (this.description != null)
+		if (this.name != undefined) this.extraData["name"] = this.name;
+		if (this.description != undefined)
 			this.extraData["description"] = this.description;
-		if (this.author != null) this.extraData["author"] = this.author;
+		if (this.author != undefined) this.extraData["author"] = this.author;
 
 		// TODO: Someday (c) Maks_gaming
-		// if (this.iconData != null) this.extraData["iconData"] = this.iconData
-		// if (this.song != null) this.extraData["song"] = this.song
+		// if (this.iconData != undefined) this.extraData["iconData"] = this.iconData
+		// if (this.song != undefined) this.extraData["song"] = this.song
 
 		return new KeyframeAnimation(
 			this.beginTick,

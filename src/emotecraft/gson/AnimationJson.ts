@@ -3,6 +3,7 @@ import AnimationFormat from "../../player_animator/AnimationFormat";
 import KeyframeAnimation from "../../player_animator/KeyframeAnimation";
 import State from "../../player_animator/State";
 import { Easing } from "../../player_animator/util/Ease";
+import Utils from "../../utils";
 
 export default class AnimationJson {
 	private readonly modVersion = 3;
@@ -20,14 +21,13 @@ export default class AnimationJson {
 
 		//Text name = EmoteInstance.instance.getDefaults().fromJson(node["name"]);
 
-		for (const key in Object.keys(node)) {
-			if (key == "uuid" || key == "comment" || key == "version") continue;
+		Object.entries(node).forEach(([key, value]) => {
+			if (key == "uuid" || key == "comment" || key == "version") return;
 
-			const value = node[key];
 			if (true /*||  value.isJsonPrimitive() */) {
-				emote.extraData[key] = value;
+				emote.extraData[key] = value as object;
 			}
-		}
+		});
 
 		emote.name = node["name"] as string;
 		if (node["author"]) {
@@ -43,7 +43,7 @@ export default class AnimationJson {
 		// }
 
 		if (node["uuid"]) {
-			emote.uuid = UUIDfromString(node["uuid"] as string);
+			emote.uuid = Utils.UUIDfromString(node["uuid"] as string);
 		}
 
 		emote.optimizeEmote();
@@ -84,7 +84,7 @@ export default class AnimationJson {
 		//KeyframeAnimation emote = new KeyframeAnimation(beginTick, endTick, resetTick, isLoop, returnTick);
 		if (node["easeBeforeKeyframe"])
 			builder.isEasingBefore = node["easeBeforeKeyframe"] as boolean;
-		this.moveDeserializer(builder, node, degrees, version);
+		this.moveDeserializer(builder, node["moves"], degrees, version);
 
 		builder.fullyEnableParts();
 
@@ -102,14 +102,14 @@ export default class AnimationJson {
 			const easing = (obj["easing"] as string) ?? "linear";
 			const turn = (obj["turn"] as number) ?? 0;
 
-			for (const key of Object.keys(obj)) {
+			Object.entries(obj).forEach(([key, value]) => {
 				if (
 					key == "tick" ||
 					key == "comment" ||
 					key == "easing" ||
 					key == "turn"
 				) {
-					continue;
+					return;
 				}
 
 				this.addBodyPartIfExists(
@@ -122,7 +122,7 @@ export default class AnimationJson {
 					turn,
 					version,
 				);
-			}
+			});
 		});
 	}
 
@@ -222,10 +222,10 @@ export default class AnimationJson {
 		easing: string,
 		turn: number,
 	) {
-		if (node.has(name)) {
+		if (node[name]) {
 			part.addKeyFrame1(
 				tick,
-				node.get(name).getAsFloat(),
+				node[name] as number,
 				Easing.easeFromString(easing),
 				turn,
 				degrees,
